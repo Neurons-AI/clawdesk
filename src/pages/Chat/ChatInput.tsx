@@ -7,7 +7,7 @@
  * are sent with the message (no base64 over WebSocket).
  */
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Send, Square, X, Paperclip, FileText, Film, Music, FileArchive, File, Loader2 } from 'lucide-react';
+import { Send, CircleStop, X, Paperclip, FileText, Film, Music, FileArchive, File, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useSlashCommands } from './useSlashCommands';
@@ -396,7 +396,7 @@ export function ChatInput({ onSend, onStop, disabled = false, sending = false }:
             title={sending ? 'Stop' : 'Send'}
           >
             {sending ? (
-              <Square className="h-4 w-4" />
+              <CircleStop className="h-4 w-4" />
             ) : (
               <Send className="h-4 w-4" />
             )}
