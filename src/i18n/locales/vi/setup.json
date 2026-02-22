@@ -1,0 +1,134 @@
+{
+    "steps": {
+        "welcome": {
+            "title": "Chào mừng đến với ClawDesk",
+            "description": "Trợ lý AI của bạn đã sẵn sàng để cấu hình"
+        },
+        "runtime": {
+            "title": "Kiểm tra môi trường",
+            "description": "Đang xác minh yêu cầu hệ thống"
+        },
+        "provider": {
+            "title": "Nhà cung cấp AI",
+            "description": "Cấu hình dịch vụ AI của bạn"
+        },
+        "channel": {
+            "title": "Kết nối kênh",
+            "description": "Kết nối nền tảng nhắn tin (tùy chọn)"
+        },
+        "installing": {
+            "title": "Đang thiết lập",
+            "description": "Cài đặt các thành phần cần thiết"
+        },
+        "complete": {
+            "title": "Hoàn tất!",
+            "description": "ClawDesk đã sẵn sàng sử dụng"
+        }
+    },
+    "welcome": {
+        "title": "Chào mừng đến với ClawDesk",
+        "description": "ClawDesk là giao diện đồ họa cho OpenClaw, giúp bạn dễ dàng sử dụng trợ lý AI trên các nền tảng nhắn tin yêu thích.",
+        "features": {
+            "noCommand": "Không cần dòng lệnh",
+            "modernUI": "Giao diện hiện đại, đẹp mắt",
+            "bundles": "Gói kỹ năng cài sẵn",
+            "crossPlatform": "Hỗ trợ đa nền tảng"
+        }
+    },
+    "runtime": {
+        "title": "Kiểm tra môi trường",
+        "viewLogs": "Xem nhật ký",
+        "recheck": "Kiểm tra lại",
+        "nodejs": "Node.js Runtime",
+        "openclaw": "Gói OpenClaw",
+        "gateway": "Dịch vụ Gateway",
+        "startGateway": "Khởi động Gateway",
+        "status": {
+            "checking": "Đang kiểm tra...",
+            "success": "Node.js đã sẵn sàng",
+            "error": "Thất bại",
+            "gatewayRunning": "Đang chạy trên cổng {{port}}",
+            "packageReady": "Gói OpenClaw đã sẵn sàng"
+        },
+        "issue": {
+            "title": "Phát hiện sự cố môi trường",
+            "desc": "Vui lòng đảm bảo OpenClaw đã được cài đặt đúng cách. Kiểm tra nhật ký để biết chi tiết."
+        },
+        "logs": {
+            "title": "Nhật ký ứng dụng",
+            "openFolder": "Mở thư mục nhật ký",
+            "close": "Đóng",
+            "noLogs": "(Chưa có nhật ký)"
+        }
+    },
+    "provider": {
+        "label": "Nhà cung cấp mô hình",
+        "selectPlaceholder": "Chọn nhà cung cấp...",
+        "baseUrl": "URL cơ sở",
+        "modelId": "ID mô hình",
+        "modelIdDesc": "Mã định danh mô hình từ nhà cung cấp (ví dụ: deepseek-ai/DeepSeek-V3)",
+        "apiKey": "Khóa API",
+        "save": "Lưu",
+        "validateSave": "Xác thực & Lưu",
+        "valid": "Đã cấu hình nhà cung cấp thành công",
+        "invalid": "Khóa API không hợp lệ",
+        "storedLocally": "Khóa API của bạn được lưu trữ cục bộ trên máy.",
+        "authMethod": "Phương thức xác thực",
+        "authApiKey": "Khóa API",
+        "authSetupToken": "Token thiết lập",
+        "authGoogleSignIn": "Đăng nhập Google",
+        "setupTokenInstallHint": "Đầu tiên, cài đặt Claude Code nếu bạn chưa có:",
+        "setupTokenInstallCommand": "npm install -g @anthropic-ai/claude-code",
+        "setupTokenInstructions": "Sau đó chạy lệnh sau để lấy token thiết lập:",
+        "setupTokenCommand": "claude setup-token",
+        "setupTokenPlaceholder": "Dán token thiết lập của bạn vào đây...",
+        "pasteTokenSave": "Dán Token & Lưu",
+        "signInWithGoogle": "Đăng nhập bằng Google",
+        "signInWithChatGPT": "Đăng nhập bằng ChatGPT",
+        "chatGPTSignIn": "Đăng nhập ChatGPT",
+        "waitingAuth": "Đang chờ ủy quyền từ trình duyệt...",
+        "oauthConfigured": "Đã cấu hình OAuth thành công"
+    },
+    "channel": {
+        "title": "Kết nối kênh nhắn tin",
+        "subtitle": "Chọn nền tảng để kết nối trợ lý AI. Bạn có thể thêm kênh khác sau trong Cài đặt.",
+        "configure": "Cấu hình {{name}}",
+        "howTo": "Cách kết nối:",
+        "viewDocs": "Xem tài liệu",
+        "validationError": "Xác thực thất bại",
+        "connected": "Đã kết nối {{name}}",
+        "connectedDesc": "Kênh của bạn đã được cấu hình. Nó sẽ kết nối khi Gateway khởi động.",
+        "configureAnother": "Cấu hình kênh khác"
+    },
+    "installing": {
+        "title": "Đang cài đặt các thành phần cần thiết",
+        "subtitle": "Thiết lập các công cụ cần thiết để hỗ trợ trợ lý AI của bạn",
+        "progress": "Tiến trình",
+        "status": {
+            "pending": "Đang chờ",
+            "installing": "Đang cài đặt...",
+            "installed": "Đã cài đặt",
+            "failed": "Thất bại"
+        },
+        "error": "Lỗi thiết lập:",
+        "restart": "Thử khởi động lại ứng dụng",
+        "wait": "Quá trình này có thể mất vài phút...",
+        "skip": "Bỏ qua bước này"
+    },
+    "complete": {
+        "title": "Thiết lập hoàn tất!",
+        "subtitle": "ClawDesk đã được cấu hình và sẵn sàng sử dụng. Bạn có thể bắt đầu trò chuyện với trợ lý AI ngay bây giờ.",
+        "provider": "Nhà cung cấp AI",
+        "components": "Thành phần",
+        "gateway": "Gateway",
+        "running": "Đang chạy",
+        "footer": "Bạn có thể tùy chỉnh kỹ năng và kết nối kênh trong Cài đặt"
+    },
+    "nav": {
+        "next": "Tiếp theo",
+        "back": "Quay lại",
+        "skipStep": "Bỏ qua bước này",
+        "skipSetup": "Bỏ qua thiết lập",
+        "getStarted": "Bắt đầu"
+    }
+}

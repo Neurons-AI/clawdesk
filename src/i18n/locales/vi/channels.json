@@ -1,0 +1,264 @@
+{
+    "title": "Kênh nhắn tin",
+    "subtitle": "Quản lý kênh nhắn tin và kết nối của bạn",
+    "refresh": "Làm mới",
+    "addChannel": "Thêm kênh",
+    "stats": {
+        "total": "Tổng số kênh",
+        "connected": "Đã kết nối",
+        "disconnected": "Đã ngắt kết nối"
+    },
+    "gatewayWarning": "Dịch vụ Gateway chưa chạy. Các kênh không thể kết nối.",
+    "available": "Kênh có sẵn",
+    "availableDesc": "Kết nối kênh mới",
+    "showAll": "Hiển thị tất cả",
+    "pluginBadge": "Plugin",
+    "toast": {
+        "whatsappConnected": "Đã kết nối WhatsApp thành công",
+        "whatsappFailed": "Kết nối WhatsApp thất bại: {{error}}",
+        "channelSaved": "Đã lưu kênh {{name}}",
+        "channelConnecting": "Đang kết nối đến {{name}}...",
+        "restartManual": "Vui lòng khởi động lại gateway thủ công",
+        "configFailed": "Cấu hình thất bại: {{error}}"
+    },
+    "dialog": {
+        "updateTitle": "Cập nhật {{name}}",
+        "configureTitle": "Cấu hình {{name}}",
+        "addTitle": "Thêm kênh",
+        "existingDesc": "Cập nhật cấu hình hiện có của bạn",
+        "selectDesc": "Chọn loại kênh để cấu hình",
+        "qrCode": "Mã QR",
+        "token": "Token",
+        "scanQR": "Quét mã QR này bằng {{name}}",
+        "refreshCode": "Làm mới mã",
+        "loadingConfig": "Đang tải cấu hình...",
+        "existingHint": "Bạn đã có cấu hình cho kênh này",
+        "howToConnect": "Cách kết nối",
+        "viewDocs": "Xem tài liệu",
+        "channelName": "Tên kênh",
+        "channelNamePlaceholder": "{{name}} của tôi",
+        "credentialsVerified": "Thông tin xác thực đã được xác minh",
+        "validationFailed": "Xác thực thất bại",
+        "warnings": "Cảnh báo",
+        "back": "Quay lại",
+        "validating": "Đang xác thực...",
+        "validateConfig": "Xác thực cấu hình",
+        "generatingQR": "Đang tạo mã QR...",
+        "validatingAndSaving": "Đang xác thực & lưu...",
+        "generateQRCode": "Tạo mã QR",
+        "updateAndReconnect": "Cập nhật & Kết nối lại",
+        "saveAndConnect": "Lưu & Kết nối",
+        "envVar": "Biến môi trường: {{var}}"
+    },
+    "meta": {
+        "telegram": {
+            "description": "Kết nối Telegram bằng token bot từ @BotFather",
+            "docsUrl": "https://docs.openclaw.ai/channels/telegram",
+            "fields": {
+                "botToken": {
+                    "label": "Token Bot",
+                    "placeholder": "123456:ABC-DEF..."
+                },
+                "allowedUsers": {
+                    "label": "ID người dùng được phép",
+                    "placeholder": "Ví dụ: 123456789, 987654321",
+                    "description": "Danh sách ID người dùng được phép sử dụng bot, phân cách bằng dấu phẩy. Bắt buộc vì lý do bảo mật."
+                }
+            },
+            "instructions": [
+                "Mở Telegram và tìm @BotFather",
+                "Gửi /newbot và làm theo hướng dẫn",
+                "Sao chép token bot được cung cấp",
+                "Dán token vào bên dưới",
+                "Lấy ID người dùng từ @userinfobot và dán vào bên dưới"
+            ]
+        },
+        "discord": {
+            "description": "Kết nối Discord bằng token bot từ Developer Portal",
+            "docsUrl": "https://docs.openclaw.ai/channels/discord#how-to-create-your-own-bot",
+            "fields": {
+                "token": {
+                    "label": "Token Bot",
+                    "placeholder": "Token bot Discord của bạn"
+                },
+                "guildId": {
+                    "label": "ID Guild/Server",
+                    "placeholder": "Ví dụ: 123456789012345678",
+                    "description": "Giới hạn bot trong một server cụ thể. Nhấp chuột phải server → Sao chép ID Server."
+                },
+                "channelId": {
+                    "label": "ID Kênh (tùy chọn)",
+                    "placeholder": "Ví dụ: 123456789012345678",
+                    "description": "Giới hạn bot trong một kênh cụ thể. Nhấp chuột phải kênh → Sao chép ID Kênh."
+                }
+            },
+            "instructions": [
+                "Truy cập Discord Developer Portal → Applications → New Application",
+                "Trong mục Bot: Add Bot, sau đó sao chép Bot Token",
+                "Bật Message Content Intent + Server Members Intent trong Bot → Privileged Gateway Intents",
+                "Trong OAuth2 → URL Generator: chọn \"bot\" + \"applications.commands\", thêm quyền tin nhắn",
+                "Mời bot vào server của bạn bằng URL đã tạo",
+                "Dán token bot vào bên dưới"
+            ]
+        },
+        "whatsapp": {
+            "description": "Kết nối WhatsApp bằng cách quét mã QR (không cần số điện thoại)",
+            "docsUrl": "https://docs.openclaw.ai/channels/whatsapp",
+            "instructions": [
+                "Mở WhatsApp trên điện thoại của bạn",
+                "Vào Cài đặt > Thiết bị liên kết > Liên kết thiết bị",
+                "Quét mã QR hiển thị bên dưới",
+                "Hệ thống sẽ tự động nhận diện số điện thoại của bạn"
+            ]
+        },
+        "signal": {
+            "description": "Kết nối Signal bằng signal-cli",
+            "docsUrl": "https://docs.openclaw.ai/channels/signal",
+            "fields": {
+                "phoneNumber": {
+                    "label": "Số điện thoại",
+                    "placeholder": "+1234567890"
+                }
+            },
+            "instructions": [
+                "Cài đặt signal-cli trên hệ thống của bạn",
+                "Đăng ký hoặc liên kết số điện thoại",
+                "Nhập số điện thoại vào bên dưới"
+            ]
+        },
+        "feishu": {
+            "description": "Kết nối bot Feishu/Lark qua WebSocket",
+            "docsUrl": "https://docs.openclaw.ai/channels/feishu#step-1-create-a-feishu-app",
+            "fields": {
+                "appId": {
+                    "label": "App ID",
+                    "placeholder": "cli_xxxxxx"
+                },
+                "appSecret": {
+                    "label": "App Secret",
+                    "placeholder": "App secret của bạn"
+                }
+            },
+            "instructions": [
+                "Đọc tài liệu, sau đó truy cập Feishu Open Platform",
+                "Tạo ứng dụng mới",
+                "Lấy App ID và App Secret",
+                "Cấu hình đăng ký sự kiện",
+                "Lưu ý: Không được đề cập trong tài liệu OpenClaw hiện tại, nhưng bạn PHẢI thêm quyền 'contact:contact.base:readonly' trong Quản lý quyền ứng dụng"
+            ]
+        },
+        "imessage": {
+            "description": "Kết nối iMessage qua BlueBubbles (macOS)",
+            "docsUrl": "https://docs.openclaw.ai/channels/bluebubbles",
+            "fields": {
+                "serverUrl": {
+                    "label": "URL Server BlueBubbles",
+                    "placeholder": "http://localhost:1234"
+                },
+                "password": {
+                    "label": "Mật khẩu server",
+                    "placeholder": "Mật khẩu server của bạn"
+                }
+            },
+            "instructions": [
+                "Cài đặt BlueBubbles server trên máy Mac của bạn",
+                "Ghi nhận URL server và mật khẩu",
+                "Nhập thông tin kết nối bên dưới"
+            ]
+        },
+        "matrix": {
+            "description": "Kết nối giao thức Matrix",
+            "docsUrl": "https://docs.openclaw.ai/channels/matrix",
+            "fields": {
+                "homeserver": {
+                    "label": "URL Homeserver",
+                    "placeholder": "https://matrix.org"
+                },
+                "accessToken": {
+                    "label": "Access Token",
+                    "placeholder": "Access token của bạn"
+                }
+            },
+            "instructions": [
+                "Tạo tài khoản Matrix hoặc sử dụng tài khoản hiện có",
+                "Lấy access token từ ứng dụng khách",
+                "Nhập homeserver và token vào bên dưới"
+            ]
+        },
+        "line": {
+            "description": "Kết nối LINE Messaging API",
+            "docsUrl": "https://docs.openclaw.ai/channels/line",
+            "fields": {
+                "channelAccessToken": {
+                    "label": "Channel Access Token",
+                    "placeholder": "Channel access token LINE của bạn"
+                },
+                "channelSecret": {
+                    "label": "Channel Secret",
+                    "placeholder": "Channel secret LINE của bạn"
+                }
+            },
+            "instructions": [
+                "Truy cập LINE Developers Console",
+                "Tạo kênh Messaging API",
+                "Lấy Channel Access Token và Secret"
+            ]
+        },
+        "msteams": {
+            "description": "Kết nối Microsoft Teams qua Bot Framework",
+            "docsUrl": "https://docs.openclaw.ai/channels/msteams",
+            "fields": {
+                "appId": {
+                    "label": "App ID",
+                    "placeholder": "Microsoft App ID của bạn"
+                },
+                "appPassword": {
+                    "label": "App Password",
+                    "placeholder": "Microsoft App Password của bạn"
+                }
+            },
+            "instructions": [
+                "Truy cập Azure Portal",
+                "Đăng ký ứng dụng Bot mới",
+                "Lấy App ID và tạo mật khẩu",
+                "Cấu hình kênh Teams"
+            ]
+        },
+        "googlechat": {
+            "description": "Kết nối Google Chat qua webhook",
+            "docsUrl": "https://docs.openclaw.ai/channels/googlechat",
+            "fields": {
+                "serviceAccountKey": {
+                    "label": "Đường dẫn JSON Service Account",
+                    "placeholder": "/đường/dẫn/đến/service-account.json"
+                }
+            },
+            "instructions": [
+                "Tạo dự án Google Cloud",
+                "Bật Google Chat API",
+                "Tạo service account",
+                "Tải xuống tệp JSON key"
+            ]
+        },
+        "mattermost": {
+            "description": "Kết nối Mattermost qua Bot API",
+            "docsUrl": "https://docs.openclaw.ai/channels/mattermost",
+            "fields": {
+                "serverUrl": {
+                    "label": "URL Server",
+                    "placeholder": "https://mattermost-cua-ban.com"
+                },
+                "botToken": {
+                    "label": "Bot Access Token",
+                    "placeholder": "Bot access token của bạn"
+                }
+            },
+            "instructions": [
+                "Truy cập Mattermost Integrations",
+                "Tạo Bot Account mới",
+                "Sao chép access token"
+            ]
+        }
+    },
+    "viewDocs": "Xem tài liệu"
+}

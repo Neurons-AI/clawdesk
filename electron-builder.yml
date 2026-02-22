@@ -1,0 +1,158 @@
+appId: app.clawdesk.desktop
+productName: ClawDesk
+copyright: Copyright © 2026 ClawDesk
+compression: normal
+artifactName: ${productName}-${version}-${os}-${arch}.${ext}
+
+directories:
+  output: release
+  buildResources: resources
+
+files:
+  - dist
+  - dist-electron
+  - package.json
+
+extraResources:
+  - from: resources/
+    to: resources/
+    filter:
+      - "**/*"
+      - "!icons/*.md"
+      - "!icons/*.svg"
+      - "!bin/**"
+  # OpenClaw package (node_modules copied separately by afterPack hook
+  # because electron-builder respects .gitignore which excludes node_modules/)
+  - from: build/openclaw/
+    to: openclaw/
+
+afterPack: ./scripts/after-pack.cjs
+
+asar: true
+asarUnpack:
+  - "**/*.node"
+
+# Auto-update via GitHub Releases
+publish:
+  - provider: github
+    owner: Neurons-ai
+    repo: ClawDesk
+    releaseType: release
+
+# macOS Configuration
+mac:
+  extraResources:
+    - from: resources/bin/darwin-${arch}
+      to: bin
+  category: public.app-category.productivity
+  icon: resources/icons/icon.icns
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+    - target: zip
+      arch:
+        - x64
+        - arm64
+  darkModeSupport: true
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: entitlements.mac.plist
+  entitlementsInherit: entitlements.mac.plist
+  notarize: true
+  extendInfo:
+    NSMicrophoneUsageDescription: ClawDesk requires microphone access for voice features
+    NSCameraUsageDescription: ClawDesk requires camera access for video features
+
+dmg:
+  background: resources/dmg-background.png
+  icon: resources/icons/icon.icns
+  iconSize: 100
+  window:
+    width: 540
+    height: 380
+  contents:
+    - type: file
+      x: 130
+      y: 220
+    - type: link
+      path: /Applications
+      x: 410
+      y: 220
+
+# Windows Configuration
+win:
+  forceCodeSigning: false
+  verifyUpdateCodeSignature: false
+  signAndEditExecutable: true
+  extraResources:
+    - from: resources/bin/win32-${arch}
+      to: bin
+  icon: resources/icons/icon.ico
+  target:
+    - target: nsis
+      arch:
+        - x64
+        - arm64
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  deleteAppDataOnUninstall: false
+  differentialPackage: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: ClawDesk
+  uninstallDisplayName: ClawDesk
+  license: LICENSE
+  include: scripts/installer.nsh
+  installerIcon: resources/icons/icon.ico
+  uninstallerIcon: resources/icons/icon.ico
+
+# Linux Configuration
+linux:
+  icon: resources/icons
+  target:
+    - target: AppImage
+      arch:
+        - x64
+        - arm64
+    - target: deb
+      arch:
+        - x64
+        - arm64
+    - target: rpm
+      arch:
+        - x64
+  category: Utility
+  maintainer: ClawDesk Team <team@clawdesk.app>
+  vendor: ClawDesk
+  synopsis: AI Assistant powered by OpenClaw
+  description: |
+    ClawDesk is a graphical AI assistant application that integrates with
+    OpenClaw Gateway to provide intelligent automation and assistance
+    across multiple messaging platforms.
+  desktop:
+    entry:
+      Name: ClawDesk
+      Comment: AI Assistant powered by OpenClaw
+      Categories: Utility;Network;
+      Keywords: ai;assistant;automation;chat;
+
+appImage:
+  license: LICENSE
+
+deb:
+  depends:
+    - libgtk-3-0
+    - libnotify4
+    - libnss3
+    - libxss1
+    - libxtst6
+    - xdg-utils
+    - libatspi2.0-0
+    - libuuid1
+  afterInstall: scripts/linux/after-install.sh
+  afterRemove: scripts/linux/after-remove.sh

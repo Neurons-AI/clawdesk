@@ -1,0 +1,48 @@
+{
+    "gatewayNotRunning": "Gateway chưa chạy",
+    "gatewayRequired": "OpenClaw Gateway cần được chạy để sử dụng trò chuyện. Nó sẽ tự động khởi động, hoặc bạn có thể khởi động từ Cài đặt.",
+    "welcome": {
+        "title": "Trò chuyện ClawDesk",
+        "subtitle": "Trợ lý AI của bạn đã sẵn sàng. Bắt đầu cuộc trò chuyện bên dưới.",
+        "askQuestions": "Đặt câu hỏi",
+        "askQuestionsDesc": "Nhận câu trả lời về mọi chủ đề",
+        "creativeTasks": "Tác vụ sáng tạo",
+        "creativeTasksDesc": "Viết lách, brainstorm, ý tưởng"
+    },
+    "noLogs": "(Chưa có nhật ký)",
+    "toolbar": {
+        "newSession": "Phiên mới",
+        "refresh": "Làm mới trò chuyện",
+        "showThinking": "Hiện suy nghĩ",
+        "hideThinking": "Ẩn suy nghĩ",
+        "model": {
+            "select": "Chọn mô hình",
+            "default": "Mặc định"
+        }
+    },
+    "slashCommands": {
+        "commands": "Lệnh",
+        "local": "Cục bộ",
+        "skills": "Kỹ năng",
+        "keyHints": "↑↓ Di chuyển  Tab Chọn  Esc Đóng",
+        "help": {
+            "name": "help",
+            "description": "Hiển thị các lệnh có sẵn"
+        },
+        "clear": {
+            "name": "clear",
+            "description": "Xóa trò chuyện và bắt đầu phiên mới"
+        },
+        "new": {
+            "name": "new",
+            "description": "Tạo phiên mới"
+        },
+        "skillsList": {
+            "name": "skills",
+            "description": "Liệt kê kỹ năng đã bật"
+        },
+        "helpMessage": "**Các lệnh có sẵn**\n- `/help` — Hiển thị thông báo trợ giúp này\n- `/clear` — Xóa trò chuyện và bắt đầu phiên mới\n- `/new` — Tạo phiên mới\n- `/skills` — Liệt kê kỹ năng đã bật\n\nBạn cũng có thể nhập `/tên-kỹ-năng` để gọi bất kỳ kỹ năng nào đã bật.",
+        "skillsListTitle": "**Kỹ năng đã bật**",
+        "noSkills": "Hiện chưa có kỹ năng nào được bật."
+    }
+}

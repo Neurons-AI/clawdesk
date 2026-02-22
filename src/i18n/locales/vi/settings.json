@@ -1,0 +1,158 @@
+{
+    "title": "Cài đặt",
+    "subtitle": "Tùy chỉnh trải nghiệm ClawDesk của bạn",
+    "appearance": {
+        "title": "Giao diện",
+        "description": "Tùy chỉnh giao diện hiển thị",
+        "theme": "Chủ đề",
+        "light": "Sáng",
+        "dark": "Tối",
+        "system": "Hệ thống",
+        "language": "Ngôn ngữ"
+    },
+    "aiProviders": {
+        "title": "Nhà cung cấp AI",
+        "description": "Cấu hình nhà cung cấp mô hình AI và khóa API",
+        "add": "Thêm nhà cung cấp",
+        "custom": "Tùy chỉnh",
+        "notRequired": "Không bắt buộc",
+        "empty": {
+            "title": "Chưa có nhà cung cấp nào được cấu hình",
+            "desc": "Thêm nhà cung cấp AI để bắt đầu sử dụng ClawDesk",
+            "cta": "Thêm nhà cung cấp đầu tiên"
+        },
+        "dialog": {
+            "title": "Thêm nhà cung cấp AI",
+            "desc": "Cấu hình nhà cung cấp mô hình AI mới",
+            "displayName": "Tên hiển thị",
+            "apiKey": "Khóa API",
+            "apiKeyStored": "Khóa API của bạn được lưu trữ cục bộ trên máy.",
+            "baseUrl": "URL cơ sở",
+            "modelId": "ID mô hình",
+            "cancel": "Hủy",
+            "change": "Đổi nhà cung cấp",
+            "add": "Thêm nhà cung cấp",
+            "save": "Lưu",
+            "validate": "Xác thực"
+        },
+        "card": {
+            "default": "Mặc định",
+            "configured": "Đã cấu hình",
+            "noKey": "Chưa đặt khóa API",
+            "setDefault": "Đặt làm mặc định",
+            "editKey": "Sửa khóa API",
+            "delete": "Xóa nhà cung cấp"
+        },
+        "toast": {
+            "added": "Đã thêm nhà cung cấp thành công",
+            "failedAdd": "Không thể thêm nhà cung cấp",
+            "deleted": "Đã xóa nhà cung cấp",
+            "failedDelete": "Không thể xóa nhà cung cấp",
+            "defaultUpdated": "Đã cập nhật nhà cung cấp mặc định",
+            "failedDefault": "Không thể đặt mặc định",
+            "updated": "Đã cập nhật nhà cung cấp",
+            "failedUpdate": "Không thể cập nhật nhà cung cấp",
+            "invalidKey": "Khóa API không hợp lệ",
+            "modelRequired": "ID mô hình là bắt buộc",
+            "oauthSuccess": "Xác thực OAuth thành công",
+            "oauthFailed": "Xác thực OAuth thất bại",
+            "tokenPasted": "Đã xác minh token thiết lập thành công",
+            "tokenFailed": "Xác minh token thiết lập thất bại"
+        },
+        "oauth": {
+            "authMethod": "Phương thức xác thực",
+            "apiKey": "Khóa API",
+            "setupToken": "Token thiết lập",
+            "googleSignIn": "Đăng nhập Google",
+            "setupTokenInstallHint": "Đầu tiên, cài đặt Claude Code nếu bạn chưa có:",
+            "setupTokenInstallCommand": "npm install -g @anthropic-ai/claude-code",
+            "setupTokenInstructions": "Sau đó chạy lệnh sau để lấy token thiết lập:",
+            "setupTokenCommand": "claude setup-token",
+            "setupTokenPlaceholder": "Dán token thiết lập của bạn vào đây...",
+            "pasteVerify": "Dán & Xác minh",
+            "signInWithGoogle": "Đăng nhập bằng Google",
+            "signInWithChatGPT": "Đăng nhập bằng ChatGPT",
+            "chatGPTSignIn": "Đăng nhập ChatGPT",
+            "waitingAuth": "Đang chờ ủy quyền từ trình duyệt...",
+            "oauthActive": "OAuth đang hoạt động",
+            "reAuth": "Xác thực lại"
+        }
+    },
+    "gateway": {
+        "title": "Gateway",
+        "description": "Cài đặt OpenClaw Gateway",
+        "status": "Trạng thái",
+        "port": "Cổng",
+        "logs": "Nhật ký",
+        "appLogs": "Nhật ký ứng dụng",
+        "openFolder": "Mở thư mục",
+        "autoStart": "Tự động khởi động Gateway",
+        "autoStartDesc": "Khởi động Gateway khi ClawDesk được mở"
+    },
+    "updates": {
+        "title": "Cập nhật",
+        "description": "Giữ ClawDesk luôn cập nhật",
+        "autoCheck": "Tự động kiểm tra cập nhật",
+        "autoCheckDesc": "Kiểm tra cập nhật khi khởi động",
+        "autoDownload": "Tự động tải cập nhật",
+        "autoDownloadDesc": "Tải cập nhật trong nền",
+        "status": {
+            "checking": "Đang kiểm tra cập nhật...",
+            "downloading": "Đang tải cập nhật...",
+            "available": "Có bản cập nhật: v{{version}}",
+            "downloaded": "Sẵn sàng cài đặt: v{{version}}",
+            "failed": "Kiểm tra cập nhật thất bại",
+            "latest": "Bạn đang dùng phiên bản mới nhất",
+            "check": "Kiểm tra cập nhật để nhận tính năng mới nhất"
+        },
+        "action": {
+            "checking": "Đang kiểm tra...",
+            "downloading": "Đang tải...",
+            "download": "Tải cập nhật",
+            "install": "Cài đặt & Khởi động lại",
+            "retry": "Thử lại",
+            "check": "Kiểm tra cập nhật"
+        },
+        "currentVersion": "Phiên bản hiện tại",
+        "whatsNew": "Có gì mới:",
+        "errorDetails": "Chi tiết lỗi:",
+        "help": "Bản cập nhật được tải trong nền và cài đặt khi bạn khởi động lại ứng dụng."
+    },
+    "advanced": {
+        "title": "Nâng cao",
+        "description": "Tùy chọn dành cho người dùng chuyên sâu",
+        "devMode": "Chế độ nhà phát triển",
+        "devModeDesc": "Hiển thị công cụ và phím tắt dành cho nhà phát triển"
+    },
+    "developer": {
+        "title": "Nhà phát triển",
+        "description": "Tùy chọn nâng cao dành cho nhà phát triển",
+        "console": "Bảng điều khiển OpenClaw",
+        "consoleDesc": "Truy cập giao diện quản lý OpenClaw gốc",
+        "openConsole": "Mở bảng điều khiển nhà phát triển",
+        "consoleNote": "Mở giao diện điều khiển với token gateway được tích hợp",
+        "gatewayToken": "Token Gateway",
+        "gatewayTokenDesc": "Dán vào cài đặt giao diện điều khiển nếu được yêu cầu",
+        "tokenUnavailable": "Token không khả dụng",
+        "tokenCopied": "Đã sao chép token gateway",
+        "cli": "OpenClaw CLI",
+        "cliDesc": "Sao chép lệnh để chạy OpenClaw mà không cần thay đổi PATH.",
+        "cliPowershell": "Lệnh PowerShell.",
+        "cmdUnavailable": "Lệnh không khả dụng",
+        "cmdCopied": "Đã sao chép lệnh CLI",
+        "installCmd": "Cài đặt lệnh \"openclaw\"",
+        "installCmdDesc": "Cài đặt ~/.local/bin/openclaw (không cần quyền admin)",
+        "installTitle": "Cài đặt lệnh OpenClaw",
+        "installMessage": "Cài đặt lệnh \"openclaw\"?",
+        "installDetail": "Thao tác này sẽ tạo ~/.local/bin/openclaw. Đảm bảo ~/.local/bin nằm trong PATH nếu bạn muốn chạy lệnh toàn cục."
+    },
+    "about": {
+        "title": "Giới thiệu",
+        "appName": "ClawDesk",
+        "tagline": "Trợ lý AI đồ họa",
+        "basedOn": "Dựa trên OpenClaw",
+        "version": "Phiên bản {{version}}",
+        "docs": "Trang web",
+        "github": "GitHub"
+    }
+}

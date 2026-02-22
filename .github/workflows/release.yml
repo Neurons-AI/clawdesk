@@ -1,0 +1,210 @@
+# ClawDesk Release Workflow
+# Builds and publishes releases for macOS, Windows, and Linux
+
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 1.0.0)'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+            platform: mac
+          - os: windows-latest
+            platform: win
+          - os: ubuntu-latest
+            platform: linux
+
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Download uv binaries for macOS
+        if: matrix.platform == 'mac'
+        run: pnpm run uv:download:mac
+
+      - name: Download uv binaries for Windows
+        if: matrix.platform == 'win'
+        run: pnpm run uv:download:win
+
+      - name: Download uv binaries for Linux
+        if: matrix.platform == 'linux'
+        run: pnpm run uv:download:linux
+
+      # macOS specific steps
+      - name: Build macOS
+        if: matrix.platform == 'mac'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Code signing
+          CSC_LINK: ${{ secrets.MAC_CERTS }}
+          CSC_KEY_PASSWORD: ${{ secrets.MAC_CERTS_PASSWORD }}
+          # Notarization
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          # Increase file descriptor limit to handle large number of files during code signing
+          ulimit -n 65536
+          echo "File descriptor limit: $(ulimit -n)"
+          
+          pnpm run package:mac
+
+      # Windows specific steps
+      - name: Build Windows
+        if: matrix.platform == 'win'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # For code signing (optional)
+          # CSC_LINK: ${{ secrets.WIN_CERTS }}
+          # CSC_KEY_PASSWORD: ${{ secrets.WIN_CERTS_PASSWORD }}
+        run: pnpm run package:win
+
+      # Linux specific steps
+      - name: Build Linux
+        if: matrix.platform == 'linux'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pnpm run package:linux
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ matrix.platform }}
+          path: |
+            release/*.dmg
+            release/*.zip
+            release/*.exe
+            release/*.AppImage
+            release/*.deb
+            release/*.rpm
+            release/*.yml
+            !release/builder-debug.yml
+          retention-days: 7
+
+  # ──────────────────────────────────────────────────────────────
+  # Job: Publish to GitHub Releases
+  # ──────────────────────────────────────────────────────────────
+  publish:
+    needs: release
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-artifacts
+
+      - name: List all downloaded artifacts
+        run: |
+          echo "=== All artifacts downloaded ==="
+          find release-artifacts/ -type f -exec ls -lh {} \;
+          echo ""
+          echo "=== File tree ==="
+          tree release-artifacts/ || find release-artifacts/ -print
+
+      - name: Remove duplicate builder-debug files
+        run: |
+          echo "Removing builder-debug.yml files to avoid duplicate asset upload conflicts..."
+          find release-artifacts/ -name "builder-debug.yml" -delete -print || true
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            release-artifacts/**/*.dmg
+            release-artifacts/**/*.zip
+            release-artifacts/**/*.exe
+            release-artifacts/**/*.AppImage
+            release-artifacts/**/*.deb
+            release-artifacts/**/*.rpm
+            release-artifacts/**/*.yml
+          draft: false
+          prerelease: ${{ contains(github.ref, 'alpha') || contains(github.ref, 'beta') }}
+          make_latest: ${{ !(contains(github.ref, 'alpha') || contains(github.ref, 'beta')) }}
+          generate_release_notes: true
+          body: |
+            ## 🚀 ClawDesk ${{ github.ref_name }}
+            
+            ClawDesk - Graphical AI Assistant based on OpenClaw
+            
+            ### 📦 Downloads
+            
+            Please select the appropriate installer for your operating system and architecture:
+            
+            #### macOS
+            - **Apple Silicon (M1/M2/M3/M4)**: `ClawDesk-*-mac-arm64.dmg`
+            - **Intel (x64)**: `ClawDesk-*-mac-x64.dmg`
+            
+            #### Windows
+            - **Installer (x64)**: `ClawDesk-*-win-x64.exe`
+            - **Installer (ARM64)**: `ClawDesk-*-win-arm64.exe`
+            
+            #### Linux
+            - **AppImage (x64)**: `ClawDesk-*-linux-x86_64.AppImage` (Universal format, recommended)
+            - **AppImage (ARM64)**: `ClawDesk-*-linux-arm64.AppImage`
+            - **Debian/Ubuntu (x64)**: `ClawDesk-*-linux-amd64.deb`
+            - **Debian/Ubuntu (ARM64)**: `ClawDesk-*-linux-arm64.deb`
+            - **RPM (x64)**: `ClawDesk-*-linux-x86_64.rpm`
+            
+            ### 📝 Release Notes
+            
+            See the auto-generated release notes below for detailed changes.
+            
+            ### ⚠️ Installation Notes
+            
+            - **macOS**: On first launch, you may see "cannot verify developer". Go to System Preferences → Security & Privacy to allow the app to run
+            - **Windows**: SmartScreen may block the app. Click "More info" → "Run anyway" to proceed
+            - **Linux**: AppImage requires executable permission: `chmod +x ClawDesk-*.AppImage`
+            
+            ---
+            
+            💬 Found an issue? Please submit an [Issue](https://github.com/${{ github.repository }}/issues)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

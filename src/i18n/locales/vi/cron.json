@@ -1,0 +1,70 @@
+{
+    "title": "Tác vụ định kỳ",
+    "subtitle": "Tự động hóa quy trình AI với các tác vụ theo lịch",
+    "newTask": "Tác vụ mới",
+    "refresh": "Làm mới",
+    "gatewayWarning": "Gateway chưa chạy. Không thể quản lý tác vụ định kỳ khi Gateway chưa hoạt động.",
+    "stats": {
+        "total": "Tổng số tác vụ",
+        "active": "Đang hoạt động",
+        "paused": "Tạm dừng",
+        "failed": "Thất bại"
+    },
+    "empty": {
+        "title": "Chưa có tác vụ định kỳ",
+        "description": "Tạo tác vụ định kỳ để tự động hóa quy trình AI. Tác vụ có thể gửi tin nhắn, chạy truy vấn hoặc thực hiện hành động vào thời gian đã định.",
+        "create": "Tạo tác vụ đầu tiên"
+    },
+    "card": {
+        "runNow": "Chạy ngay",
+        "deleteConfirm": "Bạn có chắc muốn xóa tác vụ này?",
+        "last": "Lần trước",
+        "next": "Lần tiếp"
+    },
+    "dialog": {
+        "createTitle": "Tạo tác vụ",
+        "editTitle": "Sửa tác vụ",
+        "description": "Lên lịch tác vụ AI tự động",
+        "taskName": "Tên tác vụ",
+        "taskNamePlaceholder": "Ví dụ: Tóm tắt buổi sáng",
+        "message": "Tin nhắn / Prompt",
+        "messagePlaceholder": "AI nên làm gì? Ví dụ: Cho tôi bản tóm tắt tin tức và thời tiết hôm nay",
+        "schedule": "Lịch trình",
+        "cronPlaceholder": "Biểu thức cron (ví dụ: 0 9 * * *)",
+        "usePresets": "Dùng mẫu có sẵn",
+        "useCustomCron": "Dùng cron tùy chỉnh",
+        "targetChannel": "Kênh đích",
+        "noChannels": "Không có kênh nào. Hãy thêm kênh trước.",
+        "discordChannelId": "ID Kênh Discord",
+        "discordChannelIdPlaceholder": "Ví dụ: 1438452657525100686",
+        "discordChannelIdDesc": "Nhấp chuột phải kênh Discord → Sao chép ID Kênh",
+        "enableImmediately": "Bật ngay",
+        "enableImmediatelyDesc": "Bắt đầu chạy tác vụ sau khi tạo",
+        "saveChanges": "Lưu thay đổi"
+    },
+    "presets": {
+        "everyMinute": "Mỗi phút",
+        "every5Min": "Mỗi 5 phút",
+        "every15Min": "Mỗi 15 phút",
+        "everyHour": "Mỗi giờ",
+        "daily9am": "Hàng ngày lúc 9h sáng",
+        "daily6pm": "Hàng ngày lúc 6h chiều",
+        "weeklyMon": "Hàng tuần (Thứ 2 lúc 9h)",
+        "monthly1st": "Hàng tháng (ngày 1 lúc 9h)"
+    },
+    "toast": {
+        "created": "Đã tạo tác vụ",
+        "updated": "Đã cập nhật tác vụ",
+        "enabled": "Đã bật tác vụ",
+        "paused": "Đã tạm dừng tác vụ",
+        "deleted": "Đã xóa tác vụ",
+        "triggered": "Đã kích hoạt tác vụ thành công",
+        "failedUpdate": "Không thể cập nhật tác vụ",
+        "failedDelete": "Không thể xóa tác vụ",
+        "nameRequired": "Vui lòng nhập tên tác vụ",
+        "messageRequired": "Vui lòng nhập tin nhắn",
+        "channelRequired": "Vui lòng chọn kênh",
+        "discordIdRequired": "Vui lòng nhập ID Kênh Discord",
+        "scheduleRequired": "Vui lòng chọn hoặc nhập lịch trình"
+    }
+}
