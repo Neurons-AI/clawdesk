@@ -62,11 +62,11 @@ import { providerIcons } from '@/assets/providers';
 
 /** All supported provider types with UI metadata */
 export const PROVIDER_TYPE_INFO: ProviderTypeInfo[] = [
-  { id: 'anthropic', name: 'Anthropic', icon: '🤖', placeholder: 'sk-ant-api03-...', model: 'Claude', requiresApiKey: true, supportsOAuth: true, oauthType: 'setup-token' },
-  { id: 'openai', name: 'OpenAI', icon: '💚', placeholder: 'sk-proj-...', model: 'GPT', requiresApiKey: true },
-  { id: 'openai-codex', name: 'OpenAI Codex', icon: '💚', placeholder: '', model: 'Codex', requiresApiKey: false, supportsOAuth: true, oauthType: 'oauth2' },
-  { id: 'google', name: 'Google', icon: '🔷', placeholder: 'AIza...', model: 'Gemini', requiresApiKey: true, supportsOAuth: true, oauthType: 'oauth2' },
-  { id: 'openrouter', name: 'OpenRouter', icon: '🌐', placeholder: 'sk-or-v1-...', model: 'Multi-Model', requiresApiKey: true },
+  { id: 'anthropic', name: 'Anthropic', icon: '🤖', placeholder: 'sk-ant-api03-...', model: 'Claude', requiresApiKey: true, supportsOAuth: true, oauthType: 'setup-token', defaultModelId: 'claude-opus-4-6' },
+  { id: 'openai', name: 'OpenAI', icon: '💚', placeholder: 'sk-proj-...', model: 'GPT', requiresApiKey: true, defaultModelId: 'gpt-5.2' },
+  { id: 'openai-codex', name: 'OpenAI Codex', icon: '💚', placeholder: '', model: 'Codex', requiresApiKey: false, supportsOAuth: true, oauthType: 'oauth2', defaultModelId: 'gpt-5.3-codex' },
+  { id: 'google', name: 'Google', icon: '🔷', placeholder: 'AIza...', model: 'Gemini', requiresApiKey: true, supportsOAuth: true, oauthType: 'oauth2', defaultModelId: 'gemini-3-pro-preview' },
+  { id: 'openrouter', name: 'OpenRouter', icon: '🌐', placeholder: 'sk-or-v1-...', model: 'Multi-Model', requiresApiKey: true, defaultModelId: 'anthropic/claude-opus-4.6' },
   { id: 'moonshot', name: 'Moonshot (CN)', icon: '🌙', placeholder: 'sk-...', model: 'Kimi', requiresApiKey: true, defaultBaseUrl: 'https://api.moonshot.cn/v1', defaultModelId: 'kimi-k2.5' },
   { id: 'siliconflow', name: 'SiliconFlow (CN)', icon: '🌊', placeholder: 'sk-...', model: 'Multi-Model', requiresApiKey: true, defaultBaseUrl: 'https://api.siliconflow.cn/v1', defaultModelId: 'Pro/moonshotai/Kimi-K2.5' },
   { id: 'ollama', name: 'Ollama', icon: '🦙', placeholder: 'Not required', requiresApiKey: false, defaultBaseUrl: 'http://localhost:11434', showBaseUrl: true, showModelId: true, modelIdPlaceholder: 'qwen3:latest' },

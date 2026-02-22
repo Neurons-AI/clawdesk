@@ -2,7 +2,7 @@
  * Providers Settings Component
  * Manage AI provider configurations and API keys
  */
-import { useState, useEffect, useId } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   Plus,
   Trash2,
@@ -35,7 +35,8 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 
-/** Combo input: text field with datalist suggestions from the model catalog */
+/** Model selector: <select> dropdown populated from the Gateway's synced model catalog.
+ *  Falls back to a text input for providers with showModelId (ollama, custom). */
 function ModelIdComboInput({
   value,
   onChange,
@@ -51,29 +52,77 @@ function ModelIdComboInput({
   className?: string;
   id?: string;
 }) {
-  const datalistId = useId();
-  const catalogModels = useModelsStore((s) => s.getModelsByProvider(providerType));
+  const allModels = useModelsStore((s) => s.models);
+  const fetchModels = useModelsStore((s) => s.fetchModels);
+  const typeInfo = PROVIDER_TYPE_INFO.find((t) => t.id === providerType);
+
+  // Refresh model catalog when the component mounts
+  useEffect(() => {
+    fetchModels();
+  }, [fetchModels]);
+
+  // Filter models for this provider from the synced catalog
+  const providerModels = useMemo(
+    () => allModels.filter((m) => m.provider === providerType),
+    [allModels, providerType],
+  );
+
+  // For freeform providers (ollama, custom) keep the text input + datalist
+  if (typeInfo?.showModelId) {
+    const datalistId = `model-list-${providerType}`;
+    return (
+      <>
+        <Input
+          id={id}
+          list={datalistId}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          className={className}
+        />
+        {providerModels.length > 0 && (
+          <datalist id={datalistId}>
+            {providerModels.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.name || m.id}
+              </option>
+            ))}
+          </datalist>
+        )}
+      </>
+    );
+  }
+
+  // For built-in providers, use a proper <select> dropdown
+  // Ensure the current value is always in the list
+  const options = useMemo(() => {
+    const result = providerModels.map((m) => ({ id: m.id, name: m.name || m.id }));
+    if (value && !result.some((m) => m.id === value)) {
+      result.unshift({ id: value, name: value });
+    }
+    return result;
+  }, [providerModels, value]);
 
   return (
-    <>
-      <Input
-        id={id}
-        list={datalistId}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className={className}
-      />
-      {catalogModels.length > 0 && (
-        <datalist id={datalistId}>
-          {catalogModels.map((m) => (
-            <option key={m.id} value={m.id}>
-              {m.name || m.id}
-            </option>
-          ))}
-        </datalist>
+    <select
+      id={id}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className={cn(
+        'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm',
+        'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
+        className,
       )}
-    </>
+    >
+      {options.length === 0 && (
+        <option value={value || ''}>{value || placeholder || 'Select model...'}</option>
+      )}
+      {options.map((m) => (
+        <option key={m.id} value={m.id}>
+          {m.name}
+        </option>
+      ))}
+    </select>
   );
 }
 
@@ -254,8 +303,7 @@ function ProviderCard({
   const [saving, setSaving] = useState(false);
 
   const typeInfo = PROVIDER_TYPE_INFO.find((t) => t.id === provider.type);
-  const { oauthStatus, checkOAuthStatus } = useProviderStore();
-  const providerOAuth = oauthStatus[provider.type];
+  const checkOAuthStatus = useProviderStore((s) => s.checkOAuthStatus);
 
   // Check OAuth status on mount for OAuth-capable providers without API keys
   useEffect(() => {
@@ -263,16 +311,23 @@ function ProviderCard({
       checkOAuthStatus(provider.type);
     }
   }, [typeInfo?.supportsOAuth, provider.hasKey, provider.type, checkOAuthStatus]);
-  const canEditConfig = Boolean(typeInfo?.showBaseUrl || typeInfo?.showModelId);
+  const canEditConfig = Boolean(typeInfo?.showBaseUrl || typeInfo?.showModelId || typeInfo?.defaultModelId);
+  // Provider is OAuth-authenticated if it supports OAuth and has no API key stored
+  const isOAuthProvider = Boolean(typeInfo?.supportsOAuth && !provider.hasKey);
 
+  // Reset form fields when entering edit mode.
+  // typeInfo?.defaultModelId is a compile-time constant per provider type,
+  // so we intentionally exclude it from deps to avoid re-trigger loops.
   useEffect(() => {
     if (isEditing) {
       setNewKey('');
       setShowKey(false);
       setBaseUrl(provider.baseUrl || '');
-      setModelId(provider.model || '');
+      const defaultModel = PROVIDER_TYPE_INFO.find((ti) => ti.id === provider.type)?.defaultModelId;
+      setModelId(provider.model || defaultModel || '');
     }
-  }, [isEditing, provider.baseUrl, provider.model]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEditing, provider.baseUrl, provider.model, provider.type]);
 
   const handleSaveEdits = async () => {
     setSaving(true);
@@ -349,98 +404,130 @@ function ProviderCard({
           </div>
         </div>
 
-        {/* Key row */}
+        {/* Key / OAuth row */}
         {isEditing ? (
           <div className="space-y-2">
-            {canEditConfig && (
-              <>
-                {typeInfo?.showBaseUrl && (
-                  <div className="space-y-1">
-                    <Label className="text-xs">{t('aiProviders.dialog.baseUrl')}</Label>
-                    <Input
-                      value={baseUrl}
-                      onChange={(e) => setBaseUrl(e.target.value)}
-                      placeholder="https://api.example.com/v1"
-                      className="h-9 text-sm"
-                    />
-                  </div>
-                )}
-                {typeInfo?.showModelId && (
-                  <div className="space-y-1">
-                    <Label className="text-xs">{t('aiProviders.dialog.modelId')}</Label>
-                    <ModelIdComboInput
-                      value={modelId}
-                      onChange={setModelId}
-                      providerType={provider.type}
-                      placeholder={typeInfo.modelIdPlaceholder || 'provider/model-id'}
-                      className="h-9 text-sm"
-                    />
-                  </div>
-                )}
-              </>
-            )}
-            <div className="flex gap-2">
-              <div className="relative flex-1">
+            {typeInfo?.showBaseUrl && (
+              <div className="space-y-1">
+                <Label className="text-xs">{t('aiProviders.dialog.baseUrl')}</Label>
                 <Input
-                  type={showKey ? 'text' : 'password'}
-                  placeholder={typeInfo?.requiresApiKey ? typeInfo?.placeholder : (typeInfo?.id === 'ollama' ? t('aiProviders.notRequired') : t('aiProviders.card.editKey'))}
-                  value={newKey}
-                  onChange={(e) => setNewKey(e.target.value)}
-                  className="pr-10 h-9 text-sm"
+                  value={baseUrl}
+                  onChange={(e) => setBaseUrl(e.target.value)}
+                  placeholder="https://api.example.com/v1"
+                  className="h-9 text-sm"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowKey(!showKey)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                >
-                  {showKey ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-                </button>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleSaveEdits}
-                disabled={
-                  validating
-                  || saving
-                  || (
-                    !newKey.trim()
-                    && (baseUrl.trim() || undefined) === (provider.baseUrl || undefined)
-                    && (modelId.trim() || undefined) === (provider.model || undefined)
-                  )
-                  || Boolean(typeInfo?.showModelId && !modelId.trim())
-                }
-              >
-                {validating || saving ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                ) : (
-                  <Check className="h-3.5 w-3.5" />
-                )}
-              </Button>
-              <Button variant="ghost" size="sm" onClick={onCancelEdit}>
-                <X className="h-3.5 w-3.5" />
-              </Button>
-            </div>
+            )}
+            {(typeInfo?.showModelId || typeInfo?.defaultModelId) && (
+              <div className="space-y-1">
+                <Label className="text-xs">{t('aiProviders.dialog.defaultModel')}</Label>
+                <ModelIdComboInput
+                  value={modelId}
+                  onChange={setModelId}
+                  providerType={provider.type}
+                  placeholder={typeInfo?.modelIdPlaceholder || typeInfo?.defaultModelId || 'provider/model-id'}
+                  className="h-9 text-sm"
+                />
+              </div>
+            )}
+            {/* Hide API key input for OAuth-authenticated providers */}
+            {!isOAuthProvider && (
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <Input
+                    type={showKey ? 'text' : 'password'}
+                    placeholder={typeInfo?.requiresApiKey ? typeInfo?.placeholder : (typeInfo?.id === 'ollama' ? t('aiProviders.notRequired') : t('aiProviders.card.editKey'))}
+                    value={newKey}
+                    onChange={(e) => setNewKey(e.target.value)}
+                    className="pr-10 h-9 text-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowKey(!showKey)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    {showKey ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                  </button>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSaveEdits}
+                  disabled={
+                    validating
+                    || saving
+                    || (
+                      !newKey.trim()
+                      && (baseUrl.trim() || undefined) === (provider.baseUrl || undefined)
+                      && (modelId.trim() || undefined) === (provider.model || typeInfo?.defaultModelId || undefined)
+                    )
+                    || Boolean(typeInfo?.showModelId && !modelId.trim())
+                  }
+                >
+                  {validating || saving ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <Check className="h-3.5 w-3.5" />
+                  )}
+                </Button>
+                <Button variant="ghost" size="sm" onClick={onCancelEdit}>
+                  <X className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+            )}
+            {/* Save/cancel for OAuth providers (no key field) */}
+            {isOAuthProvider && (
+              <div className="flex gap-2 justify-end">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSaveEdits}
+                  disabled={
+                    saving
+                    || (
+                      (baseUrl.trim() || undefined) === (provider.baseUrl || undefined)
+                      && (modelId.trim() || undefined) === (provider.model || typeInfo?.defaultModelId || undefined)
+                    )
+                  }
+                >
+                  {saving ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" />
+                  ) : (
+                    <Check className="h-3.5 w-3.5 mr-1" />
+                  )}
+                  {t('aiProviders.dialog.save')}
+                </Button>
+                <Button variant="ghost" size="sm" onClick={onCancelEdit}>
+                  <X className="h-3.5 w-3.5 mr-1" />
+                  {t('aiProviders.dialog.cancel')}
+                </Button>
+              </div>
+            )}
           </div>
         ) : (
           <div className="flex items-center justify-between rounded-md bg-muted/50 px-3 py-2">
             <div className="flex items-center gap-2 min-w-0">
-              <Key className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-              <span className="text-sm font-mono text-muted-foreground truncate">
-                {provider.hasKey
-                  ? (provider.keyMasked && provider.keyMasked.length > 12
-                    ? `${provider.keyMasked.substring(0, 4)}...${provider.keyMasked.substring(provider.keyMasked.length - 4)}`
-                    : provider.keyMasked)
-                  : t('aiProviders.card.noKey')}
-              </span>
-              {provider.hasKey && (
-                <Badge variant="secondary" className="text-xs shrink-0">{t('aiProviders.card.configured')}</Badge>
-              )}
-              {!provider.hasKey && providerOAuth?.authenticated && (
-                <Badge variant="secondary" className="text-xs shrink-0 bg-green-500/20 text-green-600 dark:text-green-400">
-                  <Shield className="h-3 w-3 mr-1" />
-                  {t('aiProviders.oauth.oauthActive')}
-                </Badge>
+              {isOAuthProvider ? (
+                <>
+                  <Shield className="h-3.5 w-3.5 text-green-600 dark:text-green-400 shrink-0" />
+                  <Badge variant="secondary" className="text-xs shrink-0 bg-green-500/20 text-green-600 dark:text-green-400">
+                    {t('aiProviders.oauth.oauthActive')}
+                  </Badge>
+                </>
+              ) : (
+                <>
+                  <Key className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                  <span className="text-sm font-mono text-muted-foreground truncate">
+                    {provider.hasKey
+                      ? (provider.keyMasked && provider.keyMasked.length > 12
+                        ? `${provider.keyMasked.substring(0, 4)}...${provider.keyMasked.substring(provider.keyMasked.length - 4)}`
+                        : provider.keyMasked)
+                      : t('aiProviders.card.noKey')}
+                  </span>
+                  {provider.hasKey && (
+                    <Badge variant="secondary" className="text-xs shrink-0">{t('aiProviders.card.configured')}</Badge>
+                  )}
+                </>
               )}
             </div>
             <div className="flex gap-0.5 shrink-0 ml-2">
@@ -461,9 +548,12 @@ function ProviderCard({
                   )}
                 />
               </Button>
-              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onEdit} title={t('aiProviders.card.editKey')}>
-                <Edit className="h-3.5 w-3.5" />
-              </Button>
+              {/* Only show Edit for non-OAuth providers, or if provider has model options */}
+              {(!isOAuthProvider || typeInfo?.defaultModelId) && (
+                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onEdit} title={isOAuthProvider ? t('aiProviders.dialog.defaultModel') : t('aiProviders.card.editKey')}>
+                  <Edit className="h-3.5 w-3.5" />
+                </Button>
+              )}
               <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onDelete} title={t('aiProviders.card.delete')}>
                 <Trash2 className="h-3.5 w-3.5 text-destructive" />
               </Button>
@@ -598,7 +688,7 @@ function AddProviderDialog({ existingTypes, onClose, onAdd, onValidateKey }: Add
         apiKey.trim(),
         {
           baseUrl: baseUrl.trim() || undefined,
-          model: (typeInfo?.defaultModelId || modelId.trim()) || undefined,
+          model: modelId.trim() || typeInfo?.defaultModelId || undefined,
         }
       );
     } catch {
@@ -830,9 +920,9 @@ function AddProviderDialog({ existingTypes, onClose, onAdd, onValidateKey }: Add
                     </div>
                   )}
 
-                  {typeInfo?.showModelId && (
+                  {(typeInfo?.showModelId || typeInfo?.defaultModelId) && (
                     <div className="space-y-2">
-                      <Label htmlFor="modelId">{t('aiProviders.dialog.modelId')}</Label>
+                      <Label htmlFor="modelId">{t('aiProviders.dialog.defaultModel')}</Label>
                       <ModelIdComboInput
                         id="modelId"
                         value={modelId}
@@ -841,7 +931,7 @@ function AddProviderDialog({ existingTypes, onClose, onAdd, onValidateKey }: Add
                           setValidationError(null);
                         }}
                         providerType={selectedType || ''}
-                        placeholder={typeInfo.modelIdPlaceholder || 'provider/model-id'}
+                        placeholder={typeInfo?.modelIdPlaceholder || typeInfo?.defaultModelId || 'provider/model-id'}
                       />
                     </div>
                   )}
@@ -863,7 +953,7 @@ function AddProviderDialog({ existingTypes, onClose, onAdd, onValidateKey }: Add
                 disabled={
                   !selectedType
                   || saving
-                  || (effectiveAuthMethod === 'apikey' && (typeInfo?.showModelId ?? false) && modelId.trim().length === 0)
+                  || (effectiveAuthMethod === 'apikey' && typeInfo?.showModelId && !typeInfo?.defaultModelId && modelId.trim().length === 0)
                   || (effectiveAuthMethod === 'oauth' && typeInfo?.oauthType === 'setup-token' && !setupToken.trim())
                 }
               >

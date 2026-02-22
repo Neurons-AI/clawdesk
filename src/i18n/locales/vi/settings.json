@@ -29,6 +29,7 @@
             "apiKeyStored": "Khóa API của bạn được lưu trữ cục bộ trên máy.",
             "baseUrl": "URL cơ sở",
             "modelId": "ID mô hình",
+            "defaultModel": "Mô hình mặc định",
             "cancel": "Hủy",
             "change": "Đổi nhà cung cấp",
             "add": "Thêm nhà cung cấp",

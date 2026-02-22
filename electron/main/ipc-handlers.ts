@@ -19,6 +19,7 @@ import {
   deleteProvider,
   setDefaultProvider,
   getDefaultProvider,
+  getAllProviders,
   getAllProvidersWithKeyInfo,
   type ProviderConfig,
 } from '../utils/secure-storage';
@@ -28,6 +29,7 @@ import { getSetting } from '../utils/store';
 import {
   saveProviderKeyToOpenClaw,
   removeProviderKeyFromOpenClaw,
+  removeProviderFromOpenClawConfig,
   setOpenClawDefaultModel,
   setOpenClawDefaultModelWithOverride,
 } from '../utils/openclaw-auth';
@@ -45,7 +47,7 @@ import {
 import { checkUvInstalled, installUv, setupManagedPython } from '../utils/uv-setup';
 import { updateSkillConfig, getSkillConfig, getAllSkillConfigs } from '../utils/skill-config';
 import { whatsAppLoginManager } from '../utils/whatsapp-login';
-import { getProviderConfig } from '../utils/provider-registry';
+import { getProviderConfig, getProviderDefaultModel } from '../utils/provider-registry';
 
 /**
  * Register all IPC handlers
@@ -839,14 +841,73 @@ function registerProviderHandlers(gatewayManager: GatewayManager): void {
   ipcMain.handle('provider:delete', async (_, providerId: string) => {
     try {
       const existing = await getProvider(providerId);
+      const wasDefault = (await getDefaultProvider()) === providerId;
       await deleteProvider(providerId);
 
-      // Best-effort cleanup in OpenClaw auth profiles
+      // Best-effort cleanup in OpenClaw auth profiles + config
       if (existing?.type) {
         try {
           removeProviderKeyFromOpenClaw(existing.type);
         } catch (err) {
-          console.warn('Failed to remove key from OpenClaw auth-profiles:', err);
+          console.warn('Failed to remove credentials from OpenClaw auth-profiles:', err);
+        }
+        try {
+          removeProviderFromOpenClawConfig(existing.type);
+        } catch (err) {
+          console.warn('Failed to clean up OpenClaw config:', err);
+        }
+      }
+
+      // If the deleted provider was the default, fall back to another provider
+      if (wasDefault) {
+        const remaining = await getAllProviders();
+        if (remaining.length > 0) {
+          // Pick the first enabled provider, or just the first one
+          const next = remaining.find((p) => p.enabled) || remaining[0];
+          logger.info(`Deleted default provider "${providerId}", falling back to "${next.id}" (${next.type})`);
+          // Trigger the same logic as provider:setDefault to update OpenClaw config
+          try {
+            await setDefaultProvider(next.id);
+            const provider = await getProvider(next.id);
+            if (provider) {
+              if (!provider.model) {
+                const registryDefault = getProviderDefaultModel(provider.type);
+                if (registryDefault) {
+                  const modelPart = registryDefault.startsWith(`${provider.type}/`)
+                    ? registryDefault.slice(provider.type.length + 1)
+                    : registryDefault;
+                  provider.model = modelPart;
+                  await saveProvider({ ...provider, model: modelPart, updatedAt: new Date().toISOString() });
+                }
+              }
+              let modelOverride = provider.model
+                ? `${provider.type}/${provider.model}`
+                : undefined;
+              const providerHasKey = await hasApiKey(next.id);
+              if (provider.type === 'google' && !providerHasKey) {
+                modelOverride = `google-gemini-cli/${provider.model || 'gemini-3-pro-preview'}`;
+              }
+              if (provider.type === 'custom' || provider.type === 'ollama') {
+                setOpenClawDefaultModelWithOverride(provider.type, modelOverride, {
+                  baseUrl: provider.baseUrl,
+                  api: 'openai-completions',
+                });
+              } else {
+                setOpenClawDefaultModel(provider.type, modelOverride);
+              }
+              const providerKey = await getApiKey(next.id);
+              if (providerKey) {
+                saveProviderKeyToOpenClaw(provider.type, providerKey);
+              }
+              if (gatewayManager.isConnected()) {
+                void gatewayManager.restart().catch((err) => {
+                  logger.warn('Gateway restart after fallback provider switch failed:', err);
+                });
+              }
+            }
+          } catch (err) {
+            logger.warn('Failed to set fallback default provider:', err);
+          }
         }
       }
 
@@ -914,6 +975,41 @@ function registerProviderHandlers(gatewayManager: GatewayManager): void {
           }
         }
 
+        // If this provider is the current default, re-apply OpenClaw config
+        // so model/baseUrl changes take effect immediately.
+        const currentDefault = await getDefaultProvider();
+        if (currentDefault === providerId) {
+          try {
+            let modelOverride = nextConfig.model
+              ? `${nextConfig.type}/${nextConfig.model}`
+              : undefined;
+
+            const providerHasKey = await hasApiKey(providerId);
+            if (nextConfig.type === 'google' && !providerHasKey) {
+              const googleModel = nextConfig.model || 'gemini-3-pro-preview';
+              modelOverride = `google-gemini-cli/${googleModel}`;
+            }
+
+            if (nextConfig.type === 'custom' || nextConfig.type === 'ollama') {
+              setOpenClawDefaultModelWithOverride(nextConfig.type, modelOverride, {
+                baseUrl: nextConfig.baseUrl,
+                api: 'openai-completions',
+              });
+            } else {
+              setOpenClawDefaultModel(nextConfig.type, modelOverride);
+            }
+
+            if (gatewayManager.isConnected()) {
+              logger.info(`Restarting Gateway after default provider config update`);
+              void gatewayManager.restart().catch((err) => {
+                logger.warn('Gateway restart after provider update failed:', err);
+              });
+            }
+          } catch (err) {
+            console.warn('Failed to re-apply OpenClaw default model after update:', err);
+          }
+        }
+
         return { success: true };
       } catch (error) {
         // Best-effort rollback to keep config/key consistent.
@@ -974,17 +1070,32 @@ function registerProviderHandlers(gatewayManager: GatewayManager): void {
       const provider = await getProvider(providerId);
       if (provider) {
         try {
-          // If the provider has a user-specified model (e.g. siliconflow),
-          // build the full model string: "providerType/modelId"
+          // If the provider doesn't have a model set yet, derive it from the
+          // registry default and persist it so the config stays in sync with
+          // what OpenClaw will actually use.
+          if (!provider.model) {
+            const registryDefault = getProviderDefaultModel(provider.type);
+            if (registryDefault) {
+              // registryDefault is "provider/model" — extract the model part
+              const modelPart = registryDefault.startsWith(`${provider.type}/`)
+                ? registryDefault.slice(provider.type.length + 1)
+                : registryDefault;
+              provider.model = modelPart;
+              await saveProvider({ ...provider, model: modelPart, updatedAt: new Date().toISOString() });
+            }
+          }
+
+          // Build the full model string: "providerType/modelId"
           let modelOverride = provider.model
             ? `${provider.type}/${provider.model}`
             : undefined;
 
-          // For Google OAuth (no API key), use google-gemini-cli model prefix
+          // For Google OAuth (no API key), use google-gemini-cli provider prefix
           // so the gateway matches the auth profile provider name.
           const providerHasKey = await hasApiKey(providerId);
           if (provider.type === 'google' && !providerHasKey) {
-            modelOverride = 'google-gemini-cli/gemini-3-pro-preview';
+            const googleModel = provider.model || 'gemini-3-pro-preview';
+            modelOverride = `google-gemini-cli/${googleModel}`;
           }
 
           if (provider.type === 'custom' || provider.type === 'ollama') {

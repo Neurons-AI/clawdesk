@@ -129,30 +129,115 @@ export function saveProviderKeyToOpenClaw(
 }
 
 /**
- * Remove a provider API key from OpenClaw auth-profiles.json
+ * Map ClawDesk provider type → all profile ID prefixes used in auth-profiles.json.
+ * Google OAuth uses "google-gemini-cli" as the provider name in OpenClaw,
+ * which differs from the ClawDesk type "google".
+ */
+const PROVIDER_PROFILE_PREFIXES: Record<string, string[]> = {
+  google: ['google', 'google-gemini-cli'],
+};
+
+/**
+ * Remove a provider's API key and OAuth credentials from OpenClaw auth-profiles.json.
+ * Handles both API-key profiles (`provider:default`) and OAuth profiles that may
+ * use a different prefix (e.g. `google-gemini-cli:email@example.com`).
  */
 export function removeProviderKeyFromOpenClaw(
   provider: string,
   agentId = 'main'
 ): void {
   const store = readAuthProfiles(agentId);
-  const profileId = `${provider}:default`;
 
-  delete store.profiles[profileId];
+  // All prefixes to match for this provider type
+  const prefixes = PROVIDER_PROFILE_PREFIXES[provider] || [provider];
 
-  if (store.order?.[provider]) {
-    store.order[provider] = store.order[provider].filter((id) => id !== profileId);
-    if (store.order[provider].length === 0) {
-      delete store.order[provider];
+  // Remove all profiles whose key starts with any matching prefix
+  for (const key of Object.keys(store.profiles)) {
+    if (prefixes.some((prefix) => key === `${prefix}:default` || key.startsWith(`${prefix}:`))) {
+      delete store.profiles[key];
     }
   }
 
-  if (store.lastGood?.[provider] === profileId) {
-    delete store.lastGood[provider];
+  // Clean up order and lastGood for all prefixes
+  for (const prefix of prefixes) {
+    if (store.order?.[prefix]) {
+      delete store.order[prefix];
+    }
+    if (store.lastGood?.[prefix]) {
+      delete store.lastGood[prefix];
+    }
   }
 
   writeAuthProfiles(store, agentId);
-  console.log(`Removed API key for provider "${provider}" from OpenClaw auth-profiles (agent: ${agentId})`);
+  console.log(`Removed credentials for provider "${provider}" (prefixes: ${prefixes.join(', ')}) from OpenClaw auth-profiles (agent: ${agentId})`);
+
+  // Also clean up auth.json (written by OpenClaw gateway for OAuth providers)
+  const authJsonPath = join(homedir(), '.openclaw', 'agents', agentId, 'agent', 'auth.json');
+  try {
+    if (existsSync(authJsonPath)) {
+      const raw = readFileSync(authJsonPath, 'utf-8');
+      const authData = JSON.parse(raw) as Record<string, unknown>;
+      let authChanged = false;
+      for (const prefix of prefixes) {
+        if (authData[prefix]) {
+          delete authData[prefix];
+          authChanged = true;
+        }
+      }
+      if (authChanged) {
+        writeFileSync(authJsonPath, JSON.stringify(authData, null, 2), 'utf-8');
+        console.log(`Removed credentials for provider "${provider}" from auth.json`);
+      }
+    }
+  } catch (err) {
+    console.warn('Failed to clean up auth.json:', err);
+  }
+}
+
+/**
+ * Remove a provider's configuration from ~/.openclaw/openclaw.json.
+ * Cleans up models.providers[type] and agents.defaults.model if it references this provider.
+ */
+export function removeProviderFromOpenClawConfig(provider: string): void {
+  const configPath = join(homedir(), '.openclaw', 'openclaw.json');
+
+  let config: Record<string, unknown> = {};
+  try {
+    if (existsSync(configPath)) {
+      config = JSON.parse(readFileSync(configPath, 'utf-8'));
+    }
+  } catch {
+    return; // Nothing to clean up
+  }
+
+  let changed = false;
+
+  // Remove models.providers[provider] entry
+  const models = config.models as Record<string, unknown> | undefined;
+  const providers = models?.providers as Record<string, unknown> | undefined;
+  if (providers?.[provider]) {
+    delete providers[provider];
+    changed = true;
+    console.log(`Removed models.providers.${provider} from openclaw.json`);
+  }
+
+  // Clear agents.defaults.model if it references this provider
+  const agents = config.agents as Record<string, unknown> | undefined;
+  const defaults = agents?.defaults as Record<string, unknown> | undefined;
+  const modelCfg = defaults?.model as { primary?: string } | undefined;
+  if (modelCfg?.primary) {
+    // Also check google-gemini-cli prefix for Google provider
+    const prefixes = PROVIDER_PROFILE_PREFIXES[provider] || [provider];
+    if (prefixes.some((p) => modelCfg.primary!.startsWith(`${p}/`))) {
+      delete defaults!.model;
+      changed = true;
+      console.log(`Cleared agents.defaults.model (was ${modelCfg.primary}) from openclaw.json`);
+    }
+  }
+
+  if (changed) {
+    writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf-8');
+  }
 }
 
 /**
