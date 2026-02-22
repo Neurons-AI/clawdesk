@@ -208,9 +208,12 @@ export function setOpenClawDefaultModel(provider: string, modelOverride?: string
   const agents = (config.agents || {}) as Record<string, unknown>;
   const defaults = (agents.defaults || {}) as Record<string, unknown>;
   defaults.model = { primary: model };
+  // Ensure bootstrap files (BOOTSTRAP.md etc.) are created in the workspace.
+  // OpenClaw's --dev mode sets skipBootstrap: true by default; override it.
+  defaults.skipBootstrap = false;
   agents.defaults = defaults;
   config.agents = agents;
-  
+
   // Configure models.providers for providers that need explicit registration.
   // Built-in providers (anthropic, google) are part of OpenClaw's pi-ai catalog
   // and must NOT have a models.providers entry — it would override the built-in.
@@ -322,6 +325,7 @@ export function setOpenClawDefaultModelWithOverride(
   const agents = (config.agents || {}) as Record<string, unknown>;
   const defaults = (agents.defaults || {}) as Record<string, unknown>;
   defaults.model = { primary: model };
+  defaults.skipBootstrap = false;
   agents.defaults = defaults;
   config.agents = agents;
 
