@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ClawDesk — Personal Agentic AI for Everyone</title>
+  <meta name="description" content="ClawDesk is the friendly desktop app for OpenClaw — your personal agentic AI that works with Telegram, WhatsApp, Discord, and more. No tech skills needed." />
+  <meta name="theme-color" content="#FFFBF7" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="ClawDesk — Personal Agentic AI for Everyone" />
+  <meta property="og:description" content="The friendly desktop app for OpenClaw. Your personal agentic AI that works with every chat app. No tech skills needed." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="assets/og-image.png" />
+
+  <!-- Fonts: Nunito (headings) + Inter (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Nunito:wght@700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              bg: '#FFFBF7',
+              surface: '#FFF7F0',
+              alt: '#FFF0E6',
+              cta: '#FB3D0B',
+              'cta-hover': '#E03209',
+              text: '#2D1B0E',
+              secondary: '#6B5B4E',
+              muted: '#9C8D82',
+              border: '#E8DDD4',
+              accent: '#FF6B3D',
+            }
+          },
+          fontFamily: {
+            heading: ['Nunito', 'system-ui', 'sans-serif'],
+            body: ['Inter', 'system-ui', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    html { font-family: 'Inter', system-ui, sans-serif; }
+    h1, h2, h3, h4, h5, h6 { font-family: 'Nunito', system-ui, sans-serif; }
+
+    /* Warm shadows */
+    .warm-shadow { box-shadow: 0 1px 3px rgba(45,27,14,0.06), 0 1px 2px rgba(45,27,14,0.04); }
+    .warm-shadow-md { box-shadow: 0 4px 12px rgba(45,27,14,0.06), 0 2px 4px rgba(45,27,14,0.04); }
+    .warm-shadow-lg { box-shadow: 0 10px 30px rgba(45,27,14,0.08), 0 4px 8px rgba(45,27,14,0.04); }
+    .warm-shadow-xl { box-shadow: 0 20px 50px rgba(45,27,14,0.10), 0 8px 16px rgba(45,27,14,0.05); }
+
+    /* Soft peach glow behind logo */
+    .warm-glow {
+      background: radial-gradient(circle, rgba(255,240,230,0.9) 0%, rgba(255,240,230,0) 70%);
+    }
+
+    /* Card hover lift */
+    .card-lift {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card-lift:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(45,27,14,0.10), 0 4px 8px rgba(45,27,14,0.05);
+    }
+
+    /* Smooth fade-in animation */
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-up {
+      animation: fade-up 0.6s ease-out forwards;
+    }
+    .animate-delay-100 { animation-delay: 100ms; }
+    .animate-delay-200 { animation-delay: 200ms; }
+    .animate-delay-300 { animation-delay: 300ms; }
+    .animate-delay-400 { animation-delay: 400ms; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .animate-fade-up { animation: none; opacity: 1; transform: none; }
+    }
+
+    /* Tab styles for screenshot viewer */
+    .tab-btn {
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+    .tab-btn.active {
+      color: #FB3D0B;
+      border-color: #FB3D0B;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Trust bar icon hover */
+    .trust-icon {
+      transition: transform 0.2s ease;
+    }
+    .trust-icon:hover {
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+<body class="bg-brand-bg text-brand-text antialiased">
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 warm-shadow" style="backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);">
+    <div class="max-w-6xl mx-auto flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
+      <!-- Logo -->
+      <a href="#" class="flex items-center gap-2.5 cursor-pointer" aria-label="ClawDesk Home">
+        <img src="assets/icon.png" alt="ClawDesk icon" class="w-9 h-9 rounded-xl" />
+        <span class="font-heading font-bold text-xl text-brand-text">ClawDesk</span>
+      </a>
+
+      <!-- Desktop Nav -->
+      <div class="hidden md:flex items-center gap-8">
+        <a href="#features" class="text-brand-secondary hover:text-brand-text transition-colors duration-200 text-sm font-medium cursor-pointer">Features</a>
+        <a href="#how-it-works" class="text-brand-secondary hover:text-brand-text transition-colors duration-200 text-sm font-medium cursor-pointer">How It Works</a>
+        <a href="#download" class="inline-flex items-center gap-2 bg-brand-cta hover:bg-brand-cta-hover text-white font-semibold text-sm px-5 py-2.5 rounded-xl transition-colors duration-200 cursor-pointer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download Free
+        </a>
+      </div>
+
+      <!-- Mobile menu button -->
+      <button id="mobile-menu-btn" class="md:hidden p-2 text-brand-secondary hover:text-brand-text cursor-pointer" aria-label="Toggle menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="hidden md:hidden pb-4 border-t border-brand-border mt-2 pt-4 px-4">
+      <div class="flex flex-col gap-3">
+        <a href="#features" class="text-brand-secondary hover:text-brand-text transition-colors duration-200 text-sm font-medium px-2 py-1.5 cursor-pointer">Features</a>
+        <a href="#how-it-works" class="text-brand-secondary hover:text-brand-text transition-colors duration-200 text-sm font-medium px-2 py-1.5 cursor-pointer">How It Works</a>
+        <a href="#download" class="inline-flex items-center justify-center gap-2 bg-brand-cta hover:bg-brand-cta-hover text-white font-semibold text-sm px-5 py-2.5 rounded-xl transition-colors duration-200 cursor-pointer mt-2">Download Free</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <section class="relative pt-28 pb-16 sm:pt-32 sm:pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <div class="max-w-6xl mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <!-- Left: Copy -->
+        <div>
+          <div class="animate-fade-up opacity-0 inline-flex items-center gap-2 bg-brand-alt border border-brand-border rounded-full px-4 py-1.5 mb-6">
+            <span class="w-2 h-2 rounded-full bg-green-500"></span>
+            <span class="text-brand-secondary text-sm font-medium">Desktop UI for OpenClaw &middot; Free &amp; open source</span>
+          </div>
+
+          <h1 class="animate-fade-up opacity-0 animate-delay-100 font-heading font-extrabold text-4xl sm:text-5xl lg:text-[3.25rem] leading-tight mb-6 text-brand-text">
+            Your Personal<br/>Agentic AI Assistant
+          </h1>
+
+          <p class="animate-fade-up opacity-0 animate-delay-200 text-brand-secondary text-lg sm:text-xl leading-relaxed mb-8 max-w-lg">
+            ClawDesk is the friendly desktop app that puts the power of OpenClaw AI agents in your hands &mdash; chat on Telegram, WhatsApp, Discord, and more. No tech skills needed.
+          </p>
+
+          <div class="animate-fade-up opacity-0 animate-delay-300 flex flex-col sm:flex-row items-start gap-3">
+            <a href="#download" class="inline-flex items-center gap-2.5 bg-brand-cta hover:bg-brand-cta-hover text-white font-bold text-base px-7 py-3.5 rounded-xl transition-colors duration-200 cursor-pointer warm-shadow-md">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download Free
+            </a>
+            <a href="#how-it-works" class="inline-flex items-center gap-2.5 bg-white hover:bg-brand-surface border border-brand-border text-brand-text font-semibold text-base px-7 py-3.5 rounded-xl transition-colors duration-200 cursor-pointer">
+              See How It Works
+            </a>
+          </div>
+        </div>
+
+        <!-- Right: Logo + Mockup -->
+        <div class="animate-fade-up opacity-0 animate-delay-200 flex flex-col items-center">
+          <!-- Logo with warm glow -->
+          <div class="relative mb-8">
+            <div class="warm-glow absolute inset-0 scale-150"></div>
+            <img src="assets/icon.png" alt="ClawDesk" class="relative w-56 h-56 sm:w-64 sm:h-64 lg:w-72 lg:h-72 rounded-[2.5rem]" />
+          </div>
+
+          <!-- Mini chat mockup -->
+          <div class="w-full max-w-sm warm-shadow-xl rounded-2xl overflow-hidden border border-brand-border">
+            <div class="bg-white px-4 py-2.5 flex items-center gap-2 border-b border-brand-border">
+              <div class="flex gap-1.5">
+                <div class="w-3 h-3 rounded-full bg-[#FF5F57]"></div>
+                <div class="w-3 h-3 rounded-full bg-[#FEBC2E]"></div>
+                <div class="w-3 h-3 rounded-full bg-[#28C840]"></div>
+              </div>
+              <div class="flex-1 text-center">
+                <span class="text-brand-muted text-xs font-medium">ClawDesk</span>
+              </div>
+            </div>
+            <div class="bg-brand-surface aspect-[4/3]">
+              <img
+                src="assets/screenshot-chat.png"
+                alt="ClawDesk chat interface"
+                class="w-full h-full object-cover"
+                loading="eager"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+              />
+              <div class="hidden flex-col items-center justify-center gap-3 h-full bg-brand-surface">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-brand-muted/40">
+                  <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+                </svg>
+                <span class="text-brand-muted text-sm">Chat Preview</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TRUST BAR ===== -->
+  <section class="py-14 px-4 sm:px-6 lg:px-8 border-y border-brand-border bg-white">
+    <div class="max-w-5xl mx-auto text-center">
+      <p class="text-brand-secondary text-base font-semibold uppercase tracking-wider mb-8">Your AI agent works with your favorite apps</p>
+      <div class="flex flex-wrap items-center justify-center gap-8 sm:gap-12">
+        <!-- Telegram -->
+        <div class="trust-icon flex flex-col items-center gap-2">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor" class="text-[#26A5E4]"><path d="M11.944 0A12 12 0 000 12a12 12 0 0012 12 12 12 0 0012-12A12 12 0 0012.056 0h-.112zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 01.171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+          <span class="text-brand-secondary text-sm font-medium">Telegram</span>
+        </div>
+
+        <!-- WhatsApp -->
+        <div class="trust-icon flex flex-col items-center gap-2">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor" class="text-[#25D366]"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          <span class="text-brand-secondary text-sm font-medium">WhatsApp</span>
+        </div>
+
+        <!-- Discord -->
+        <div class="trust-icon flex flex-col items-center gap-2">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor" class="text-[#5865F2]"><path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+          <span class="text-brand-secondary text-sm font-medium">Discord</span>
+        </div>
+
+        <!-- Signal -->
+        <div class="trust-icon flex flex-col items-center gap-2">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor" class="text-[#3A76F0]"><path d="M4.07 1A3.07 3.07 0 001 4.07v15.86A3.07 3.07 0 004.07 23h15.86A3.07 3.07 0 0023 19.93V4.07A3.07 3.07 0 0019.93 1H4.07zm8.18 3.3c4.84 0 8.65 3.41 8.65 7.94 0 4.56-3.81 7.93-8.65 7.93-1.53 0-2.95-.38-4.19-1.04L4 20.3l1.22-3.93A7.37 7.37 0 013.6 12.24c0-4.53 3.81-7.94 8.65-7.94z"/></svg>
+          <span class="text-brand-secondary text-sm font-medium">Signal</span>
+        </div>
+
+        <!-- LINE -->
+        <div class="trust-icon flex flex-col items-center gap-2">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor" class="text-[#00B900]"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+          <span class="text-brand-secondary text-sm font-medium">LINE</span>
+        </div>
+
+        <!-- Zalo -->
+        <div class="trust-icon flex flex-col items-center gap-2">
+          <img src="assets/zalo-icon.svg" alt="Zalo" width="40" height="40" />
+          <span class="text-brand-secondary text-sm font-medium">Zalo</span>
+        </div>
+
+        <!-- And more -->
+        <div class="flex flex-col items-center gap-2">
+          <span class="w-10 h-10 rounded-full bg-brand-alt border border-brand-border flex items-center justify-center text-brand-secondary text-sm font-bold">+5</span>
+          <span class="text-brand-secondary text-sm font-medium">more</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FEATURES ===== -->
+  <section id="features" class="py-20 sm:py-28 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-14">
+        <span class="text-brand-cta font-semibold text-sm uppercase tracking-wider">Features</span>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl lg:text-5xl mt-3 mb-5 text-brand-text">Your agentic AI, made simple</h2>
+        <p class="text-brand-secondary text-lg max-w-xl mx-auto">ClawDesk gives you a friendly desktop interface for your personal AI agent &mdash; powerful enough to do real work, simple enough for anyone.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- Feature 1: Chat anywhere -->
+        <div class="card-lift bg-white border border-brand-border rounded-2xl p-8 cursor-default">
+          <div class="w-12 h-12 rounded-xl bg-brand-alt flex items-center justify-center mb-5">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-brand-cta">
+              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+            </svg>
+          </div>
+          <h3 class="font-heading font-bold text-xl mb-3 text-brand-text">Chat with AI, Anywhere</h3>
+          <p class="text-brand-secondary leading-relaxed">Your personal AI agent lives where you already chat. Send a message on Telegram, WhatsApp, or Discord and it responds, takes action, and gets things done.</p>
+        </div>
+
+        <!-- Feature 2: Skills -->
+        <div class="card-lift bg-white border border-brand-border rounded-2xl p-8 cursor-default">
+          <div class="w-12 h-12 rounded-xl bg-brand-alt flex items-center justify-center mb-5">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-brand-accent">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+          </div>
+          <h3 class="font-heading font-bold text-xl mb-3 text-brand-text">Teach Your AI New Tricks</h3>
+          <p class="text-brand-secondary leading-relaxed">Browse the skills marketplace and give your agent new abilities with one click. Web search, image generation, data lookups &mdash; your AI learns what you need.</p>
+        </div>
+
+        <!-- Feature 3: Scheduling -->
+        <div class="card-lift bg-white border border-brand-border rounded-2xl p-8 cursor-default">
+          <div class="w-12 h-12 rounded-xl bg-brand-alt flex items-center justify-center mb-5">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#E8940E]">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <h3 class="font-heading font-bold text-xl mb-3 text-brand-text">Set It and Forget It</h3>
+          <p class="text-brand-secondary leading-relaxed">Your agent works even when you don't. Schedule it to send messages, check updates, or run tasks automatically &mdash; daily summaries, reminders, reports, all on autopilot.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== HOW IT WORKS ===== -->
+  <section id="how-it-works" class="py-20 sm:py-28 px-4 sm:px-6 lg:px-8 bg-brand-alt">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-14">
+        <span class="text-brand-cta font-semibold text-sm uppercase tracking-wider">How It Works</span>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl lg:text-5xl mt-3 mb-5 text-brand-text">Ready in three easy steps</h2>
+        <p class="text-brand-secondary text-lg max-w-xl mx-auto">From download to your first AI conversation in just a few minutes.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+
+        <!-- Step 1 -->
+        <div class="relative text-center">
+          <div class="w-16 h-16 rounded-2xl bg-white warm-shadow-md flex items-center justify-center mx-auto mb-6">
+            <span class="font-heading font-extrabold text-2xl text-brand-cta">1</span>
+          </div>
+          <h3 class="font-heading font-bold text-xl mb-3 text-brand-text">Download the App</h3>
+          <p class="text-brand-secondary leading-relaxed">It installs just like any other app. Available for macOS, Windows, and Linux.</p>
+          <!-- Connector line -->
+          <div class="hidden md:block absolute top-8 left-[60%] w-[80%] border-t-2 border-dashed border-brand-border"></div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="relative text-center">
+          <div class="w-16 h-16 rounded-2xl bg-white warm-shadow-md flex items-center justify-center mx-auto mb-6">
+            <span class="font-heading font-extrabold text-2xl text-brand-accent">2</span>
+          </div>
+          <h3 class="font-heading font-bold text-xl mb-3 text-brand-text">Connect Your AI</h3>
+          <p class="text-brand-secondary leading-relaxed">Add your AI provider &mdash; we walk you through it step by step. No complicated settings.</p>
+          <div class="hidden md:block absolute top-8 left-[60%] w-[80%] border-t-2 border-dashed border-brand-border"></div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="text-center">
+          <div class="w-16 h-16 rounded-2xl bg-white warm-shadow-md flex items-center justify-center mx-auto mb-6">
+            <span class="font-heading font-extrabold text-2xl text-green-600">3</span>
+          </div>
+          <h3 class="font-heading font-bold text-xl mb-3 text-brand-text">Start Chatting</h3>
+          <p class="text-brand-secondary leading-relaxed">Link your messaging apps and go. Your personal AI agent is ready to help wherever you chat.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== APP SHOWCASE ===== -->
+  <section class="py-20 sm:py-28 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-12">
+        <span class="text-brand-accent font-semibold text-sm uppercase tracking-wider">App Showcase</span>
+        <h2 class="font-heading font-extrabold text-3xl sm:text-4xl lg:text-5xl mt-3 mb-5 text-brand-text">See it in action</h2>
+        <p class="text-brand-secondary text-lg max-w-xl mx-auto">A friendly desktop interface designed for everyone &mdash; not just developers.</p>
+      </div>
+
+      <!-- Tab buttons -->
+      <div class="flex items-center justify-center gap-2 mb-8 flex-wrap">
+        <button class="tab-btn active px-5 py-2 rounded-full text-sm font-semibold border-2 border-brand-cta text-brand-cta bg-white cursor-pointer" data-tab="chat">Chat</button>
+        <button class="tab-btn px-5 py-2 rounded-full text-sm font-semibold border-2 border-brand-border text-brand-secondary bg-white cursor-pointer" data-tab="channels">Channels</button>
+        <button class="tab-btn px-5 py-2 rounded-full text-sm font-semibold border-2 border-brand-border text-brand-secondary bg-white cursor-pointer" data-tab="skills">Skills</button>
+        <button class="tab-btn px-5 py-2 rounded-full text-sm font-semibold border-2 border-brand-border text-brand-secondary bg-white cursor-pointer" data-tab="dashboard">Dashboard</button>
+      </div>
+
+      <!-- Tab content -->
+      <div class="warm-shadow-xl rounded-2xl overflow-hidden border border-brand-border bg-white">
+        <!-- Window chrome -->
+        <div class="bg-white px-4 py-3 flex items-center gap-2 border-b border-brand-border">
+          <div class="flex gap-1.5">
+            <div class="w-3 h-3 rounded-full bg-[#FF5F57]"></div>
+            <div class="w-3 h-3 rounded-full bg-[#FEBC2E]"></div>
+            <div class="w-3 h-3 rounded-full bg-[#28C840]"></div>
+          </div>
+          <div class="flex-1 text-center">
+            <span class="text-brand-muted text-xs font-medium" id="tab-title">Chat</span>
+          </div>
+        </div>
+
+        <!-- Screenshots -->
+        <div class="relative bg-brand-surface">
+          <div class="tab-content active" data-tab="chat">
+            <img src="assets/screenshot-chat.png" alt="ClawDesk chat interface" class="w-full aspect-[16/9] object-cover" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+            <div class="hidden flex-col items-center justify-center aspect-[16/9] bg-brand-surface">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-brand-muted/40 mb-2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+              <span class="text-brand-muted text-sm">Chat interface preview</span>
+            </div>
+          </div>
+          <div class="tab-content" data-tab="channels">
+            <img src="assets/screenshot-channels.png" alt="ClawDesk channels management" class="w-full aspect-[16/9] object-cover" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+            <div class="hidden flex-col items-center justify-center aspect-[16/9] bg-brand-surface">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-brand-muted/40 mb-2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+              <span class="text-brand-muted text-sm">Channels management preview</span>
+            </div>
+          </div>
+          <div class="tab-content" data-tab="skills">
+            <img src="assets/screenshot-skills.png" alt="ClawDesk skills marketplace" class="w-full aspect-[16/9] object-cover" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+            <div class="hidden flex-col items-center justify-center aspect-[16/9] bg-brand-surface">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-brand-muted/40 mb-2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <span class="text-brand-muted text-sm">Skills marketplace preview</span>
+            </div>
+          </div>
+          <div class="tab-content" data-tab="dashboard">
+            <img src="assets/screenshot-dashboard.png" alt="ClawDesk dashboard" class="w-full aspect-[16/9] object-cover" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+            <div class="hidden flex-col items-center justify-center aspect-[16/9] bg-brand-surface">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-brand-muted/40 mb-2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              <span class="text-brand-muted text-sm">Dashboard preview</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== DOWNLOAD CTA ===== -->
+  <section id="download" class="py-20 sm:py-28 px-4 sm:px-6 lg:px-8 bg-brand-alt">
+    <div class="max-w-3xl mx-auto text-center">
+      <!-- Crab logo callback -->
+      <div class="relative inline-block mb-8">
+        <div class="warm-glow absolute inset-0 scale-[2]"></div>
+        <img src="assets/icon.png" alt="ClawDesk" class="relative w-24 h-24 rounded-2xl" />
+      </div>
+
+      <h2 class="font-heading font-extrabold text-3xl sm:text-4xl lg:text-5xl mb-5 text-brand-text">Ready to Meet Your Personal AI Agent?</h2>
+      <p class="text-brand-secondary text-lg max-w-lg mx-auto mb-10">Download ClawDesk for free &mdash; the easiest way to run OpenClaw on your computer. It takes less than a minute to get started.</p>
+
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
+        <!-- macOS -->
+        <a href="#" class="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-white hover:bg-brand-surface border border-brand-border text-brand-text font-semibold text-base px-7 py-4 rounded-xl transition-colors duration-200 cursor-pointer warm-shadow">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="text-brand-text">
+            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+          </svg>
+          macOS
+        </a>
+
+        <!-- Windows -->
+        <a href="#" class="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-white hover:bg-brand-surface border border-brand-border text-brand-text font-semibold text-base px-7 py-4 rounded-xl transition-colors duration-200 cursor-pointer warm-shadow">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="text-brand-text">
+            <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/>
+          </svg>
+          Windows
+        </a>
+
+        <!-- Linux -->
+        <a href="#" class="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-white hover:bg-brand-surface border border-brand-border text-brand-text font-semibold text-base px-7 py-4 rounded-xl transition-colors duration-200 cursor-pointer warm-shadow">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="text-brand-text">
+            <path d="M12.504 0c-.155 0-.311.001-.465.003-.653.014-1.274.145-1.814.489-.52.329-.885.809-1.146 1.379-.26.57-.406 1.216-.457 1.928-.051.707-.024 1.477.047 2.293.073.845.198 1.734.364 2.637-.759.282-1.407.64-1.946 1.07-.46.368-.853.785-1.131 1.256-.279.472-.433.994-.439 1.561-.006.572.136 1.185.414 1.827.279.641.689 1.305 1.227 1.969.514.633 1.141 1.265 1.857 1.867-1.226.465-2.131 1.088-2.732 1.871-.635.826-.98 1.826-.98 2.951 0 1.247.516 2.343 1.443 3.193.928.85 2.225 1.423 3.73 1.697 1.505.275 3.22.255 4.955-.097 1.736-.353 3.282-1.005 4.468-2.082 1.183-1.074 1.835-2.498 1.835-4.25a4.89 4.89 0 00-.056-.756c1.192-.94 2.044-2.026 2.582-3.226.541-1.206.779-2.53.666-3.94-.114-1.426-.621-2.617-1.499-3.527-.849-.879-2.021-1.441-3.451-1.641.009-.787-.006-1.521-.066-2.19-.063-.703-.198-1.356-.45-1.937-.252-.58-.616-1.067-1.136-1.399-.533-.341-1.14-.46-1.785-.467zm.08 1.498c.429.005.808.082 1.1.268.294.186.532.485.724.914.192.429.323.983.378 1.628.047.543.063 1.148.053 1.806-.553-.178-1.14-.297-1.757-.367-.622-.07-1.273-.098-1.943-.084-.679.015-1.337.073-1.955.168-.593.091-1.123.21-1.579.355-.159-.85-.278-1.687-.347-2.479-.065-.748-.084-1.449-.04-2.084.044-.634.174-1.18.387-1.631.213-.451.488-.756.827-.938.339-.182.734-.259 1.15-.254z"/>
+          </svg>
+          Linux
+        </a>
+      </div>
+
+      <p class="text-brand-muted text-sm">
+        Free and open source &middot; By
+        <a href="https://neuronsai.net/" target="_blank" rel="noopener noreferrer" class="text-brand-cta hover:underline cursor-pointer">Neurons AI Team</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="border-t border-brand-border py-10 px-4 sm:px-6 lg:px-8 bg-white">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+      <!-- Logo -->
+      <div class="flex items-center gap-2.5">
+        <img src="assets/icon.png" alt="ClawDesk icon" class="w-8 h-8 rounded-lg" />
+        <span class="font-heading font-bold text-brand-muted text-sm">ClawDesk &copy; 2026</span>
+      </div>
+
+      <!-- Links -->
+      <div class="flex items-center gap-6">
+        <a href="https://github.com/xnohat/clawdesk" target="_blank" rel="noopener noreferrer" class="text-brand-muted hover:text-brand-text transition-colors duration-200 text-sm cursor-pointer flex items-center gap-1.5">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
+        </a>
+        <a href="https://github.com/xnohat/clawdesk/issues" target="_blank" rel="noopener noreferrer" class="text-brand-muted hover:text-brand-text transition-colors duration-200 text-sm cursor-pointer">Issues</a>
+        <a href="https://github.com/xnohat/clawdesk/releases" target="_blank" rel="noopener noreferrer" class="text-brand-muted hover:text-brand-text transition-colors duration-200 text-sm cursor-pointer">Releases</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    // Mobile menu toggle
+    const btn = document.getElementById('mobile-menu-btn');
+    const menu = document.getElementById('mobile-menu');
+    btn.addEventListener('click', () => {
+      menu.classList.toggle('hidden');
+    });
+    menu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => menu.classList.add('hidden'));
+    });
+
+    // Tab navigation for screenshots
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    const tabTitle = document.getElementById('tab-title');
+    const tabLabels = { chat: 'Chat', channels: 'Channels', skills: 'Skills', dashboard: 'Dashboard' };
+
+    tabBtns.forEach(tabBtn => {
+      tabBtn.addEventListener('click', () => {
+        const target = tabBtn.dataset.tab;
+
+        // Update buttons
+        tabBtns.forEach(b => {
+          b.classList.remove('active');
+          b.style.borderColor = '';
+          b.style.color = '';
+        });
+        tabBtn.classList.add('active');
+
+        // Update content
+        tabContents.forEach(c => c.classList.remove('active'));
+        document.querySelector(`.tab-content[data-tab="${target}"]`).classList.add('active');
+
+        // Update title
+        tabTitle.textContent = tabLabels[target] || target;
+      });
+    });
+  </script>
+
+</body>
+</html>
