@@ -3,10 +3,10 @@
   <img src="src/assets/logo.svg" width="128" height="128" alt="ClawDesk Logo" />
 </p>
 
-<h1 align="center">ClawDesk</h1>
+<h1 align="center">ClawDesk moved to <a href="https://github.com/Neurons-AI/crawbot">CrawBot</a></h1>
 
 <p align="center">
-  <strong>The Desktop Interface for OpenClaw AI Agents</strong>
+  <strong>Rebrand to <a href="https://github.com/Neurons-AI/crawbot">CrawBot</a></strong>
 </p>
 
 <p align="center">
